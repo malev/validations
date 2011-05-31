@@ -1,0 +1,19 @@
+label{
+    display: block;
+    float: left;
+    width: 75px;
+}
+fieldset {
+    border: medium none;
+    width: 250px;
+}
+fieldset.radiogroup label{
+    width: 200px;
+}
+fieldset input{
+    float: left;
+}
+.error{
+    border: 1px solid red;
+    color: red;
+}
