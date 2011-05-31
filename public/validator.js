@@ -2,7 +2,7 @@
 // http://www.learningjquery.com/2007/10/a-plugin-development-pattern
 // http://docs.jquery.com/Plugins/Authoring
 // http://www.cristalab.com/tutoriales/crear-plugins-para-jquery-c251l/
-
+// http://www.designchemical.com/blog/index.php/jquery/jquery-tooltips-create-your-own-tooltip-plugin/
 (function($){
     $.fn.validable = function(options) {
         var $this = $(this);
@@ -16,50 +16,49 @@
         var $this = $(this);
         if(validable($this)){
             var classes = getClasses($this);
-            console.log(classes);
             $.each(classes.split(" "), function(index, value) {
-                if(typeof(validations[value]) === 'function'){
-                    validations[value]($this);
+                if(validators.hasOwnProperty(value)){
+                    validations[value].validate($this);
                 }
             });
         } else {
             return undefined;
         }
     };
-    $.fn.validate = function(options){
-
-    };
-    function validable($obj) {
-        return $obj.hasClass("required");
-    }
-    function getClasses($obj) {
-        return $obj.attr("class");
-    };
-    function debug($obj) {
-        if (window.console && window.console.log)
-            window.console.log('hilight selection count: ' + $obj.size());
-    };
-    var errorMessages = {
-        'required' : 'This field is mandatory',
-        'email'   : 'Should be a valid email address'
-    }
-    var showErrors = {
-        'required' : function($element){
-
+    var validators = {
+        'types'    : ['required', 'email'],
+        'required' : {
+            errorMessage : 'This field is mandatory',
+            showError    : function($element){
+                $element.addClass("error");
+                $element.before("<label class='error'>" + errorMessage + "</label>");
+            },
+            validate     : function($element){
+                if($element.val() === ""){
+                    showError($element);
+                    return true;
+                } else{
+                    return false;
+                }
+            }
         },
-        'email'    : function($element){
-
+        'email'    : {
+            errorMessage : 'Please privide a valid email address',
+            regExpresion : /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+            showError    : function($element){
+                $element.addClass("error");
+                $element.before("<label class='error'>" + errorMessage + "</label>");
+            },
+            validate     : function($element){
+                if(regExpresion.test($element.val())){
+                    return false;
+                } else {
+                    showError();
+                    return true;
+                }
+            }
         }
     }
-    var validations = {
-        'required': function($element) {
-            return $element.val() == "";
-        },
-        'email' : function($element){
-            var email_expr = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-            return !email_expr.test($element.val());
-        }
-    };
 })(jQuery);
 //
 // create closure
