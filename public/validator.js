@@ -6,19 +6,23 @@
 (function($){
     $.fn.validable = function(options) {
         var $this = $(this);
-        if($this.hasClass("required")){
+        if ($this.hasClass("valide")){
             return true;
         } else {
             return false;
         }
     };
+    $.fn.removeErrors = function(){
+
+    }
     $.fn.isValid = function(options){
         var $this = $(this);
-        if(validable($this)){
-            var classes = getClasses($this);
+        $.fn.removeErrors();
+        if ($this.validable()){
+            var classes = $this.attr("class");
             $.each(classes.split(" "), function(index, value) {
                 if(validators.hasOwnProperty(value)){
-                    validations[value].validate($this);
+                    return validators[value].validate($this);
                 }
             });
         } else {
@@ -31,11 +35,11 @@
             errorMessage : 'This field is mandatory',
             showError    : function($element){
                 $element.addClass("error");
-                $element.before("<label class='error'>" + errorMessage + "</label>");
+                $element.before("<label class='error'>" + this.errorMessage + "</label>");
             },
             validate     : function($element){
-                if($element.val() === ""){
-                    showError($element);
+                if ($element.val() === ""){
+                    this.showError($element);
                     return true;
                 } else{
                     return false;
@@ -47,13 +51,14 @@
             regExpresion : /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
             showError    : function($element){
                 $element.addClass("error");
-                $element.before("<label class='error'>" + errorMessage + "</label>");
+                $element.before("<label class='error'>" + this.errorMessage + "</label>");
             },
             validate     : function($element){
-                if(regExpresion.test($element.val())){
+                var value = $element.val();
+                if (value == "" || this.regExpresion.test(value)){
                     return false;
                 } else {
-                    showError();
+                    this.showError($element);
                     return true;
                 }
             }
